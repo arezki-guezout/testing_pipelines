@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'NAMESPACE', defaultValue: 'dev', description: 'Kubernetes namespace')
+        string(name: 'ENV_URL', defaultValue: '', description: 'Base URL de l’environnement')
+    }
+
+    stages {
+        stage('Deploy') {
+            steps {
+                echo "Déploiement dans le namespace ${params.NAMESPACE}"
+                sh """
+                # Exemple : apply d’un manifest K8s avec namespace variable
+                kubectl apply -f k8s/app.yaml -n ${params.NAMESPACE}
+                """
+            }
+        }
+    }
+}
+
+
