@@ -2,4 +2,4 @@
 Dans ce projet, chaque branche simule une façon de coder son pipeline de test.
 tous les fichiers de chaque branche sont des jenkinsfile, ils seront nommés selon le nom du job qui leur serait associé.
 
-Dans ce projet, tous le pipeline est codé dans un seul fichier, cette solution n'est pas la plus collaborative.
+Dans ce projet, plusieurs jobs vont se succeder, l'un appelant l'autre soit via un upstream, soit via un build job.
