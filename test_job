@@ -1,0 +1,28 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'ENV_URL', defaultValue: '', description: 'URL de l’environnement à tester')
+        choice(name: 'TEST_TYPE', choices: ['unit', 'integration', 'e2e', 'performance'], description: 'Type de tests à exécuter')
+    }
+
+    stages {
+        stage('Run Tests') {
+            steps {
+                echo "Lancement des tests ${params.TEST_TYPE} sur ${params.ENV_URL}"
+
+                script {
+                    if (params.TEST_TYPE == 'unit') {
+                        sh './run_unit_tests.sh'
+                    } else if (params.TEST_TYPE == 'integration') {
+                        sh "./run_integration_tests.sh --base-url ${params.ENV_URL}"
+                    } else if (params.TEST_TYPE == 'e2e') {
+                        sh "./run_e2e_tests.sh --base-url ${params.ENV_URL}"
+                    } else if (params.TEST_TYPE == 'performance') {
+                        sh "./run_perf_tests.sh --base-url ${params.ENV_URL}"
+                    }
+                }
+            }
+        }
+    }
+}
+
