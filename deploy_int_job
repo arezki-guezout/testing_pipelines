@@ -8,7 +8,7 @@ pipeline {
                     def url = "http://env-int.myapp.local"
                     
                     // Lancer le job de test en lui passant l'URL
-                    build job: 'test_int_jobjob',
+                    build job: 'test_int_job',
                           parameters: [
                             string(name: 'ENV_URL', value: url)
                           ]
