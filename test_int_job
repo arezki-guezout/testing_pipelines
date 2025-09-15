@@ -5,7 +5,17 @@ pipeline{
   }
   stages{
     stage('integration tests'){
-      sh 'npx cypress run --baseUrl ${params.URL_ENV}'
+      steps{
+        sh 'npx cypress run --baseUrl ${params.URL_ENV}'
+      }
+    }
+    //Solution Downstream
+    stage('deploy to recette'){
+      steps{
+        script{
+          build job: 'deploy_rec_job'
+        }
+      }
     }
   }
 }
