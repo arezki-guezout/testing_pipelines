@@ -1,0 +1,20 @@
+// Job de déploiement
+pipeline {
+    agent any
+    stages {
+        stage('Deploy') {
+            steps {
+                script {
+                    def url = "http://env-int.myapp.local"
+                    
+                    // Lancer le job de test en lui passant l'URL
+                    build job: 'test_int_jobjob',
+                          parameters: [
+                            string(name: 'ENV_URL', value: url)
+                          ]
+                }
+            }
+        }
+    }
+}
+
