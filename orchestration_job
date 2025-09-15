@@ -1,0 +1,93 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Deploy DEV') {
+            steps {
+                script {
+                    build job: 'deploy-job', parameters: [
+                        string(name: 'NAMESPACE', value: 'dev'),
+                        string(name: 'ENV_URL', value: 'http://dev.myapp.local')
+                    ]
+                }
+            }
+        }
+
+        stage('Tests Integration DEV') {
+            steps {
+                script {
+                    build job: 'tests-job', parameters: [
+                        string(name: 'ENV_URL', value: 'http://dev.myapp.local'),
+                        string(name: 'TEST_TYPE', value: 'integration')
+                    ]
+                }
+            }
+        }
+
+        stage('Deploy INT') {
+            steps {
+                script {
+                    build job: 'deploy-job', parameters: [
+                        string(name: 'NAMESPACE', value: 'int'),
+                        string(name: 'ENV_URL', value: 'http://int.myapp.local')
+                    ]
+                }
+            }
+        }
+
+        stage('Tests E2E INT') {
+            steps {
+                script {
+                    build job: 'tests-job', parameters: [
+                        string(name: 'ENV_URL', value: 'http://int.myapp.local'),
+                        string(name: 'TEST_TYPE', value: 'e2e')
+                    ]
+                }
+            }
+        }
+
+        stage('Deploy RECETTE') {
+            steps {
+                script {
+                    build job: 'deploy-job', parameters: [
+                        string(name: 'NAMESPACE', value: 'recette'),
+                        string(name: 'ENV_URL', value: 'http://recette.myapp.local')
+                    ]
+                }
+            }
+        }
+
+        stage('Tests E2E + TNR RECETTE') {
+            steps {
+                script {
+                    build job: 'tests-job', parameters: [
+                        string(name: 'ENV_URL', value: 'http://recette.myapp.local'),
+                        string(name: 'TEST_TYPE', value: 'e2e')
+                    ]
+                }
+            }
+        }
+
+        stage('Deploy PREPROD') {
+            steps {
+                script {
+                    build job: 'deploy-job', parameters: [
+                        string(name: 'NAMESPACE', value: 'preprod'),
+                        string(name: 'ENV_URL', value: 'http://preprod.myapp.local')
+                    ]
+                }
+            }
+        }
+
+        stage('Perf + UAT PREPROD') {
+            steps {
+                script {
+                    build job: 'tests-job', parameters: [
+                        string(name: 'ENV_URL', value: 'http://preprod.myapp.local'),
+                        string(name: 'TEST_TYPE', value: 'performance')
+                    ]
+                }
+            }
+        }
+    }
+}
