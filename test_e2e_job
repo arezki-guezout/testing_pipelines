@@ -1,0 +1,11 @@
+pipeline{
+  agent any
+  parameters {
+    string(name: 'URL_ENV', defaultValue: '')
+  }
+  stages{
+    stage('integration tests'){
+      sh 'npx cypress run --baseUrl ${params.URL_ENV}'
+    }
+  }
+}
