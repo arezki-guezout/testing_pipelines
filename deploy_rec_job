@@ -3,7 +3,7 @@ pipeline {
     agent any
     //Solution Upstream
     trigger {
-        upstream: 'test_rec_job'
+        upstream: 'test_int_job'
     }
     stages {
         stage('Deploy') {
