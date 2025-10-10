@@ -2,34 +2,55 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Checkout') {
+            steps { git branch: "${BRANCH_NAME}", url: 'git@repo.git' }
+        }
+
+        stage('Build & Unit Tests') {
+            steps { sh 'mvn clean test' }
+        }
+
+        stage('Build Docker Image') {
+            steps { sh 'docker build -t registry/service:${GIT_COMMIT} .' }
+        }
+
+        stage('Deploy to Dev') {
+            when { branch 'feature/*' }
+            steps { sh './deploy.sh dev registry/service:${GIT_COMMIT}' }
+        }
+
+        stage('Smoke Tests Dev') {
+            when { branch 'feature/*' }
+            steps { sh './tests/smoke.sh dev' }
+        }
+
+        stage('Integration Env') {
+            when { branch 'develop' }
             steps {
-                sh './build.sh'
+                sh './deploy.sh integration registry/service:${GIT_COMMIT}'
+                sh './tests/integration.sh integration'
             }
         }
 
-        stage('Deploy DEV') {
+        stage('Recette Env (UAT)') {
+            when { branch pattern: "release/.*", comparator: "REGEXP" }
             steps {
-                sh './deploy_dev.sh'
+                sh './deploy.sh recette registry/service:${GIT_COMMIT}'
+                sh './tests/tnr.sh recette'
             }
         }
 
-        stage('Integration Tests') {
+        stage('Preprod & Prod') {
+            when { branch 'main' }
             steps {
-                sh './run_integration_tests.sh'
-            }
-        }
-
-        stage('Deploy Recette') {
-            steps {
-                sh './deploy_recette.sh'
-            }
-        }
-
-        stage('E2E + TNR Tests') {
-            steps {
-                sh './run_e2e_tests.sh'
+                sh './deploy.sh preprod registry/service:${GIT_COMMIT}'
+                sh './tests/smoke.sh preprod'
+                sh './tests/perf.sh preprod'
+                input message: "Valider mise en Prod ?"
+                sh './deploy.sh prod registry/service:${GIT_COMMIT}'
+                sh './tests/smoke.sh prod'
             }
         }
     }
 }
+
