@@ -1,12 +1,12 @@
 pipeline{
   agent any
   parameters {
-    string(name: 'URL_ENV', defaultValue: '')
+    string(name: 'ENV_URL', defaultValue: '')
   }
   stages{
     stage('integration tests'){
       steps{
-        sh 'npx cypress run --baseUrl ${params.URL_ENV}'
+        sh 'npx cypress run --baseUrl ${params.ENV_URL}'
       }
     }
     //Solution Downstream
