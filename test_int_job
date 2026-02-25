@@ -6,6 +6,7 @@ pipeline{
   stages{
     stage('integration tests'){
       steps{
+        echo "npx cypress run --baseUrl ${params.ENV_URL}"
         sh 'npx cypress run --baseUrl ${params.ENV_URL}'
       }
     }
